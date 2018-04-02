@@ -1,0 +1,31 @@
+﻿id,value,color
+ALL,,
+ALL.America,,
+ALL.America.静如,1,#808080
+ALL.America.xiaoli,0.5,#2E2575
+ALL.America.xiaozhang & CSS,3,#E54F24
+ALL.America.xiaowang,1.5,#FF9900
+ALL.America.xiaoyang,3,#563B7E
+ALL.America.xiaoqian,3,#D6BA33
+ALL.America.xiaozhou,3,#1169AE
+ALL.America.xiaozhu,2.5,#F6854D
+ALL.China,,
+ALL.China.zhao,1.5,#617CBE
+ALL.China.qian,1,#0073AD
+ALL.China.sun,1.5,#E58E00
+ALL.China.zhou,3,#EB2C2F
+ALL.China.wu,2,#EB2C2F
+ALL.China.zheng,2.5,#59666C
+ALL.China.wang,3,#6DB33F
+ALL.China.feng,2.5,#6DB33F
+ALL.China.chen,2.5,#5FA134
+ALL.China.chu,3,#005F0F
+ALL.Japan,,
+ALL.Japan.1,2.5,#00618A
+ALL.buzhidao,,
+ALL.buzhidao.VPS & SharedHost,2,#808080
+ALL.buzhidao.Linux,2.5,#040404
+ALL.buzhidao.Apache & ALLcat,2,#CA212F
+ALL.123,,
+ALL.123.11,1.5,#00A0D2
+ALL.123.22,1.5,#0678BE
