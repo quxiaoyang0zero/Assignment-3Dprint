@@ -13,7 +13,7 @@
 - [ ] 界面美观性不做要求
 - [ ] 提示：可使用[opencv](https://opencv.org/)等计算机视觉库
 
-[gesture](/gesture.png)
+[gesture](gesture.png)
 
 ## 二. Web端
 设计并实现一个网站，主题自拟，可以以个人主页为主题，满足以下条件：
