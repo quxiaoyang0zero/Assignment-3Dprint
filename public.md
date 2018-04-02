@@ -13,6 +13,8 @@
 - [ ] 界面美观性不做要求
 - [ ] 提示：可使用[opencv](https://opencv.org/)等计算机视觉库
 
+[gesture](gesture1.png)
+
 ## 二. Web端
 设计并实现一个网站，主题自拟，可以以个人主页为主题，满足以下条件：
 
@@ -30,7 +32,7 @@
 
 - [ ] 使用 [git](http://www.bootcss.com/p/git-guide/) 将项目提交至 [Assignment-3Dprint](https://github.com/JemRu/Assignment-3Dprint) 远程仓库
 - [x] 第一步，申请 github 账号，将账号发送至面试群获得修改权限
-- [x] 第一步，修改远程仓库中readme文件，在最下面添加项目提交标记 （下图张三为例）
+- [x] 第一步，修改远程仓库中readme文件，在最下面添加项目提交标记 
 - [x] 第二步，新建文件夹，将项目核心上传至该文件夹，文件夹以姓名命名
 - [ ] 周日 几点 N3楼 哪个 教室 进行简单的项目展示
 
