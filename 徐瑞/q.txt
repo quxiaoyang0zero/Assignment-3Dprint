@@ -1,0 +1,122 @@
+<p><img src="\\images\\221.png" alt="2333" title=""></p>
+
+<p>题目描述 Description <br>
+在一条数轴上有N个点，分别是1～N。一开始所有的点都被染成黑色。接着 <br>
+我们进行M次操作，第i次操作将[Li,Ri]这些点染成白色。请输出每个操作执行后 <br>
+剩余黑色点的个数。</p>
+
+<p>输入描述 Input Description <br>
+输入一行为N和M。下面M行每行两个数Li、Ri</p>
+
+<p>输出描述 Output Description <br>
+输出M行，为每次操作后剩余黑色点的个数。</p>
+
+<p>样例输入 Sample Input <br>
+10 3 <br>
+3 3 <br>
+5 7 <br>
+2 8</p>
+
+<p>样例输出 Sample Output <br>
+9 <br>
+6 <br>
+3</p>
+
+<p>数据范围及提示 Data Size &amp; Hint <br>
+数据限制 <br>
+对30%的数据有1&lt;=N&lt;=2000,1&lt;=M&lt;=2000 <br>
+对100%数据有1&lt;=Li&lt;=Ri&lt;=N&lt;=200000,1&lt;=M&lt;=200000</p>
+
+<p>吃果果的线段树；；</p>
+
+<pre class="prettyprint"><code class=" hljs cpp"><span class="hljs-preprocessor">#include&lt;cstdio&gt;</span>
+<span class="hljs-preprocessor">#include&lt;iostream&gt;</span>
+<span class="hljs-preprocessor">#include&lt;algorithm&gt;</span>
+<span class="hljs-preprocessor">#include&lt;cstring&gt;</span>
+<span class="hljs-preprocessor">#include&lt;cmath&gt;</span>
+<span class="hljs-preprocessor">#include&lt;vector&gt;</span>
+<span class="hljs-preprocessor">#include&lt;queue&gt;</span>
+<span class="hljs-preprocessor">#include&lt;map&gt;</span>
+<span class="hljs-preprocessor">#include&lt;set&gt;</span>
+<span class="hljs-preprocessor">#include&lt;stack&gt;</span>
+<span class="hljs-preprocessor">#include&lt;cstdlib&gt;</span>
+<span class="hljs-preprocessor">#include&lt;string&gt;</span>
+<span class="hljs-preprocessor">#include&lt;bitset&gt;</span>
+<span class="hljs-preprocessor">#include&lt;iomanip&gt;</span>
+<span class="hljs-preprocessor">#include&lt;deque&gt;</span>
+<span class="hljs-preprocessor">#define INF 1000000000</span>
+<span class="hljs-preprocessor">#define fi first</span>
+<span class="hljs-preprocessor">#define se second</span>
+<span class="hljs-preprocessor">#define N 100005</span>
+<span class="hljs-preprocessor">#define P 1000000007</span>
+<span class="hljs-preprocessor">#define debug(x) cerr&lt;&lt;#x&lt;&lt;"="&lt;&lt;x&lt;&lt;endl</span>
+<span class="hljs-preprocessor">#define MP(x,y) make_pair(x,y)</span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> <span class="hljs-built_in">std</span>;
+<span class="hljs-keyword">int</span> n,m;
+<span class="hljs-keyword">int</span> t[<span class="hljs-number">1000010</span>],lazy[<span class="hljs-number">1000010</span>]; 
+<span class="hljs-keyword">inline</span> <span class="hljs-keyword">int</span> get_num()
+{
+<span class="hljs-keyword">int</span> num = <span class="hljs-number">0</span>;
+<span class="hljs-keyword">char</span> c;
+<span class="hljs-keyword">bool</span> flag = <span class="hljs-keyword">false</span>;
+<span class="hljs-keyword">while</span> ((c = getchar()) == <span class="hljs-string">' '</span> || c == <span class="hljs-string">'\n'</span> || c == <span class="hljs-string">'\r'</span>);
+<span class="hljs-keyword">if</span> (c == <span class="hljs-string">'-'</span>) flag = <span class="hljs-keyword">true</span>;
+<span class="hljs-keyword">else</span> num = c - <span class="hljs-string">'0'</span>;
+<span class="hljs-keyword">while</span> (<span class="hljs-built_in">isdigit</span>(c = getchar()))
+num = num * <span class="hljs-number">10</span> + c - <span class="hljs-string">'0'</span>;
+<span class="hljs-keyword">return</span> (flag ? -<span class="hljs-number">1</span> : <span class="hljs-number">1</span>) * num;
+}
+<span class="hljs-keyword">void</span> build(<span class="hljs-keyword">int</span> x,<span class="hljs-keyword">int</span> l,<span class="hljs-keyword">int</span> r)
+{
+    <span class="hljs-keyword">if</span>(l==r)
+    {
+        t[x]=<span class="hljs-number">1</span>;
+        <span class="hljs-keyword">return</span>;
+    } 
+    <span class="hljs-keyword">int</span> mid=(l+r)&gt;&gt;<span class="hljs-number">1</span>;
+    build(<span class="hljs-number">2</span>*x,l,mid);
+    build(<span class="hljs-number">2</span>*x+<span class="hljs-number">1</span>,mid+<span class="hljs-number">1</span>,r);
+    t[x]=t[<span class="hljs-number">2</span>*x]+t[<span class="hljs-number">2</span>*x+<span class="hljs-number">1</span>];
+}
+<span class="hljs-keyword">void</span> find(<span class="hljs-keyword">int</span> x,<span class="hljs-keyword">int</span> l,<span class="hljs-keyword">int</span> r,<span class="hljs-keyword">int</span> q,<span class="hljs-keyword">int</span> w)
+{
+    <span class="hljs-keyword">if</span>(t[x]==<span class="hljs-number">0</span>)
+    <span class="hljs-keyword">return</span>;
+    <span class="hljs-keyword">if</span>(l==q&amp;&amp;r==w)
+    {
+        t[x]=<span class="hljs-number">0</span>;
+        <span class="hljs-keyword">return</span>;
+    }
+    <span class="hljs-keyword">int</span> mid=(l+r)&gt;&gt;<span class="hljs-number">1</span>;
+    <span class="hljs-keyword">if</span>(mid&gt;=w)
+    {
+        find(<span class="hljs-number">2</span>*x,l,mid,q,w);
+    }<span class="hljs-keyword">else</span>
+    {
+        <span class="hljs-keyword">if</span>(mid&lt;q)
+        find(<span class="hljs-number">2</span>*x+<span class="hljs-number">1</span>,mid+<span class="hljs-number">1</span>,r,q,w);
+        <span class="hljs-keyword">else</span>
+        {
+        find(<span class="hljs-number">2</span>*x,l,mid,q,mid);
+        find(<span class="hljs-number">2</span>*x+<span class="hljs-number">1</span>,mid+<span class="hljs-number">1</span>,r,mid+<span class="hljs-number">1</span>,w);
+        }
+    }
+    t[x]=t[<span class="hljs-number">2</span>*x]+t[<span class="hljs-number">2</span>*x+<span class="hljs-number">1</span>];
+}
+<span class="hljs-keyword">int</span> main()
+{
+    <span class="hljs-built_in">cin</span>&gt;&gt;n&gt;&gt;m;
+    build(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,n);
+    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> i=<span class="hljs-number">1</span>;i&lt;=m;i++)
+    {
+        <span class="hljs-keyword">int</span> q,w;
+        q=get_num();
+        w=get_num();
+        find(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,n,q,w);
+        <span class="hljs-built_in">cout</span>&lt;&lt;t[<span class="hljs-number">1</span>]&lt;&lt;endl;
+    }
+}
+</code></pre>
+
+<p><img src="https://img-blog.csdn.net/20161109093625566" alt="这里写图片描述" title=""></p>   
+,,,,,,           
