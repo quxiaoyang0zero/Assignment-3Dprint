@@ -1,0 +1,336 @@
+﻿package com.example.lenovo.shibie;
+
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.MediaStore;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
+import org.opencv.core.Core;
+import org.opencv.core.CvException;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfInt4;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
+import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
+import org.opencv.imgproc.Moments;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Vector;
+
+import static org.opencv.imgproc.Imgproc.circle;
+import static org.opencv.imgproc.Imgproc.line;
+
+public class MainActivity extends AppCompatActivity {
+    private double max_size=1024;
+    private int PICK_IMAGE_REQUEST=1;
+    private ImageView myImageview;
+    private Bitmap selectbp;
+//    public static final int TAKE_PHOTO =1;
+ //   private Uri imageUri;
+    int number=0;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        staticLoadCVLibraries();//初始化
+        myImageview=(ImageView)findViewById(R.id.imageView);
+        myImageview.setScaleType(ImageView.ScaleType.FIT_CENTER);//图片居中显示
+        Button selectImageBtn=(Button)findViewById(R.id.select_btn);
+        Button takePhoto=(Button)findViewById(R.id.paizhao);
+        selectImageBtn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                selectImage();
+            }
+        });
+        takePhoto.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent intent=new Intent();
+                intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE
+                );
+                intent.addCategory(Intent.CATEGORY_DEFAULT);
+                startActivityForResult(intent,0);
+            }
+        });
+        Button processBtn=(Button)findViewById(R.id.process_btn);
+        processBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+             //   convertGray();
+                number=0;
+                TextView text2=(TextView)findViewById(R.id.textview);
+                initial(selectbp);
+               // TextView text2=(TextView)findViewById(R.id.textview);
+                text2.setText("Numbers "+number);
+            }
+        });
+
+
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+      //  if(requestCode==0)
+       //  myImageview.setImageURI(data.getData());
+       // if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri uri = data.getData();
+            try {
+                Log.d("image-tag", "start to decode selected image now...");
+                InputStream input = getContentResolver().openInputStream(uri);
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = true;
+                BitmapFactory.decodeStream(input, null, options);
+                int raw_width = options.outWidth;
+                int raw_height = options.outHeight;
+                int max = Math.max(raw_width, raw_height);
+                int newWidth = raw_width;
+                int newHeight = raw_height;
+                int inSampleSize = 1;
+               if(max > max_size) {
+                    newWidth = raw_width / 2;
+                    newHeight = raw_height / 2;
+                    while((newWidth/inSampleSize) > max_size || (newHeight/inSampleSize) > max_size) {
+                        inSampleSize *=2;
+                    }
+                }
+
+                options.inSampleSize = inSampleSize;
+                options.inJustDecodeBounds = false;
+                options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                selectbp = BitmapFactory.decodeStream(getContentResolver().openInputStream(uri), null, options);
+
+                myImageview.setImageBitmap(selectbp);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+ //   }
+  /* private void convertGray() {
+       Mat src = new Mat();
+       Mat temp = new Mat();
+       Mat dst = new Mat();
+       Utils.bitmapToMat(selectbp, src);
+       Imgproc.cvtColor(src, temp, Imgproc.COLOR_BGRA2BGR);
+       Log.i("CV", "image type:" + (temp.type() == CvType.CV_8UC3));
+       Imgproc.cvtColor(temp, dst, Imgproc.COLOR_BGR2GRAY);
+       Utils.matToBitmap(dst, selectbp);
+       myImageview.setImageBitmap(selectbp);
+   }*/
+    //图像处理
+    private void initial(Bitmap bm){
+        Mat frame=new Mat();
+        Mat skinArea=new Mat();
+        Mat img=new Mat();
+        Utils.bitmapToMat(bm,frame);
+
+        Size size=new Size(3,3);
+        org.opencv.imgproc.Imgproc.GaussianBlur(frame,frame,size,0);//高斯模糊处理
+        skinArea.create(frame.rows(), frame.cols(), org.opencv.core.CvType.CV_8UC1);
+
+        skinExtract(frame,skinArea);//肤色提取
+        frame.copyTo(img,skinArea);//复制数据
+        Vector<MatOfPoint> contours=new Vector<MatOfPoint>();//一个向量，二维点
+        MatOfInt4 hierarchy=new MatOfInt4();//????
+
+        //寻找轮廓
+        Imgproc.findContours(skinArea, contours, hierarchy, Imgproc.RETR_CCOMP,Imgproc.CHAIN_APPROX_SIMPLE);
+       //找最大轮廓
+        int index=0;
+        double area=0,maxArea=0;
+        for(int i=0;i<contours.size();i++)
+        {
+            area=Imgproc.contourArea(contours.get(i));
+            if(area>maxArea){
+                maxArea=area;
+                index=i;
+            }
+        }
+        Moments moment=Imgproc.moments(skinArea,true);//图像的距
+        Point center=new Point(moment.get_m10()/moment.get_m00(), moment.get_m01()/moment.get_m00());
+        Scalar scalar=new Scalar(255,255,255);
+
+        circle(img, center, 8 ,scalar, 5);//画图
+        MatOfPoint couPoint = contours.get(index);
+
+        Point[] a=couPoint.toArray();
+        //计算重心
+
+        int max=0, count=0, notice=0;
+
+        Vector<Point> fingerTips = new Vector<Point>();
+       Point p,q,r;//曲率法用
+        Point temp;
+        //寻找指尖
+       for(int i=0;i<a.length;i++){
+            temp=a[i];
+           //改点到重心距离
+            int dist= (int) ((temp.x -center.x) * (temp.x -center.x) + (temp.y -center.y) * (temp.y -center.y));
+            if (dist > max)
+            {
+                max = dist;
+                notice = i;
+            }//找最大距离max
+            //最大距离没有更新时
+            if (dist != max)
+            {count++;
+                if (count >40)//个值可以自己设定
+                {//计算最大值保持的点数，如果大于,就认为是指尖
+                    count = 0;
+                    max = 0;
+                    boolean flag= false;
+                    // 低于手心不算
+                    if(center.y < a[notice].y)
+                        continue;
+                    // 离得太近的不算
+                    for (int j =0; j < fingerTips.size(); j++)
+                    {
+                        Point point3=fingerTips.get(j);
+                        if(Math.abs(a[notice].x - point3.x)< 30)//其实可以和平均距离相比
+                        {flag = true;
+                            break;
+                        }
+                    }
+                    if(flag) continue;
+                    else number++;
+                    fingerTips.add(a[notice]);
+                    Scalar scalar1=new Scalar(255,255,255);
+
+                    circle(img,a[notice], 6 ,scalar1, 5);//画指尖
+
+                    line(img,center, a[notice], scalar1, 2);//划线，重心和手指
+                }
+            }}
+
+     /* number=0;
+     //曲率的方法，以角度方式
+        for (int i = 15; i < (a.length - 15); i++)
+
+        {
+
+            q = a[i+15];
+
+            p = a[i];
+
+            r = a[i-15];
+
+            int dot = (int) ((q.x - p.x ) * (q.y - p.y) + (r.x - p.x )* (r.y - p.y));
+
+            if (dot < 20 && dot > -20)
+
+            {
+
+                int cross = (int)((q.x - p.x ) * (r.y - p.y) - (r.x - p.x ) * (q.y - p.y));
+
+                if (cross > 0)
+
+                {
+
+                    fingerTips.add(p);
+
+                    Scalar scalar1=new Scalar(255,0,0);
+
+                    circle(img, p, 5,scalar1, 5);
+
+                    line(img, center,p, scalar1, 2);
+
+                    number++;
+
+                }
+
+            }
+
+        }*/
+
+
+
+
+        Bitmap bmp=null;
+
+        try{
+
+            //Imgproc.cvtColor(seedsImage,show_img, Imgproc.COLOR_GRAY2RGBA, 4);
+
+            bmp = Bitmap.createBitmap(img.cols(),img.rows(), Bitmap.Config.ARGB_8888);
+
+            Utils.matToBitmap(img,bmp);
+            myImageview.setImageBitmap(bmp);
+        }
+
+        catch (CvException e){Log.d("Exception",e.getMessage());}
+
+    }
+
+
+
+
+    private void skinExtract(Mat frame,Mat skinArea){//肤色提取，skinArea为二值化肤色图像
+        Mat YCbCr=new Mat();
+        //Mat frame=new Mat();
+       // Utils.bitmapToMat(selectbp,frame);//src就是frame
+        Imgproc.cvtColor(frame, YCbCr,Imgproc.COLOR_RGB2YCrCb);//转化为YCbCr
+        double buf1[]=new double[3];
+
+        double buf3[]={255,255,255};
+
+        double buf4[]={0,0,0};
+        for(int i=0;i<YCbCr.rows();i++){
+
+            for(int j=0;j<YCbCr.cols();j++){
+
+                buf1=YCbCr.get(i,j);
+
+                if(buf1[1]>=133&& buf1[1]<=173 && 77<=buf1[2] && buf1[2]<=127)//认为此为肤色
+
+                    skinArea.put(i,j, buf3);
+
+                else
+
+                    skinArea.put(i,j, buf4);
+
+            }
+
+        }
+        Point point=new Point(-1,-1);
+
+        Mat mat=new Mat(5, 5, CvType.CV_8UC1);
+        //膨胀和腐蚀，膨胀可以填补凹洞（将裂缝桥接），腐蚀可以消除细的凸起（“斑点”噪声）
+        Imgproc.dilate(skinArea, skinArea,mat,point,-1);
+
+        Imgproc.erode(skinArea, skinArea,mat,point,-1);
+
+    }
+
+    private void selectImage(){
+        Intent intent=new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent,"选择图像..."),PICK_IMAGE_REQUEST);
+
+    }
+    private void staticLoadCVLibraries(){//加载OpenCV库静态加载并初始化
+        boolean load= OpenCVLoader.initDebug();
+        if(load){
+            Log.i("CV","Open CV Libraries loaded...");
+        }
+    }
+}
+
+
