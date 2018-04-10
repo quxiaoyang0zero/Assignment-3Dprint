@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>MINE</title>
+<style>
+	.all{ width: 100%;}	
+	html,div,body,ul,ol,img{padding :0px; margin :0px;}
+	.menu_bg{ width: 100%; height:50px; }
+	.top{ width:100%; }
+	.menu_content{ margin: 0 auto; width:95%; height:100%; opacity:1!important;  }
+	li{list-style:none;}
+	.menu_left ul li { float:left; color:#000; font-site:12px;padding :0 20px;
+	border-right: 1px solid #8D8D8D;}
+	.menu_right ul li { float:left; color:#000; font-site:12px;padding :0 20px;
+	border-right: 1px solid #8D8D8D;}
+	.menu_right { float: right;}
+	.menu_left { padding-top:15px; }
+	.menu_left_last { border-right: 0px!important; }
+	a { text-decoration:none;color:#000; }
+	.dropdown {
+ 	 position: relative;
+ 	 color:#999;
+	 display: inline-block;
+	}
+	.dropdown-content {
+	  display: none;
+	  position: absolute;
+	  background-color:#CAD1FB;
+	  min-width: 50px;
+	  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	  padding: 12px 16px;
+	}
+	.menu_right .dropdown .dropdown-content {
+		position:absolute;
+		right:1px;
+	}
+	.dropdown:hover .dropdown-content{
+	  display: block;
+	}
+	#low{ margin-top:100px; width:80px; height:80px;}
+	#low-content{display:none;}
+</style>
+<script src="jquery.min.js"></script>
+<script> 
+$(document).ready(function(){
+  $("#low").mouseenter(function(){
+    $("#low-content").slideToggle("500");
+  });
+});
+function dywyy()
+{
+	alert("网易云音乐，启动！");
+}
+function dytim()
+{
+	alert("Tim，启动！");
+}
+function dysai()
+{
+	alert("SAI 2，启动！");
+}
+</script>
+</head>
+
+<body background="bg1.jpg" style="background-repeat:no-repeat; background-size:cover; " >
+
+<div class="all">
+    
+	
+	<div class="menu_bg">
+    
+    
+    	<div class="menu_content">
+        	
+            
+        	<div class="menu_left">
+            	<ul>
+                <li>
+                <div class="dropdown">
+  					<a href="http://www.bilibili.com" target="_blank">BILIBILI</a>
+						<div class="dropdown-content">
+    						<a href="https://t.bilibili.com/" target="_blank">动态</a>
+                            <p></p>
+    						<a href="https://space.bilibili.com/28171564/#/favlist" target="_blank">收藏夹</a>
+				</div> </div> 
+                </li>
+                <li>
+                <div class="dropdown">
+  					<a href="">PIXIV</a>
+						<div class="dropdown-content">
+    						<a href="">日榜</a>
+                            <p></p>
+                            <a href="">周榜</a>
+                            <p></p>
+    						<a href="">收集</a>
+				</div> </div> 
+                </li>
+                <li>
+                <div class="dropdown">
+  					<a href="">网课</a>
+						<div class="dropdown-content">
+    						<a href="http://202.194.7.17:88/learning_sjtup/">英语</a>
+                            <p></p>
+                            <a href="http://i.mooc.chaoxing.com/space/index.shtml">尔雅</a>
+				</div> </div> 
+                </li>
+                <li> <a href="">音乐</a> </li>
+                <li> <a href="">游戏</a> </li>
+                <li class="menu_left_last"> <a href="">阅读</a> </li>
+                </ul>
+            </div> 
+            
+            
+     	    <div class="menu_right">
+            	<div class="dropdown">
+  					<span style="color:#000">我的</span>
+					<div class="dropdown-content">
+    						<a href="2.html">插画</a>
+                            <p></p>
+    						<a href="3.html">随笔</a>
+					</div>
+            	</div>
+            </div>
+            
+            
+        </div>
+        
+        
+    </div>
+    
+    <div align="center" style="padding-top:150px; margin-right:90px; margin-top:50px;">
+    <form action="http://www.baidu.com/baidu" target="_blank">
+	<div style="color:#FFFFFF;">
+	<a href="http://www.baidu.com/"></a>
+	<input type=text name=word size=70 style="height:35px; font-size:18px">
+	<input type="submit" value=" " style="width:41px; height:41px; position: absolute; background-image:url(submit.png);">
+	</div>
+	</form>
+    </div>
+    
+    <div id="low">
+    	<img src="qqq.jpg" />
+    </div>
+    <div id="low-content">
+    	<img src="qqqq.jpg" usemap="#myMap"/>
+        <map id="myMap" name="myMap">
+		<area shape="rect" coords="0,0,80,50" alt="网易云" href="javascript: dywyy()">
+		<area shape="rect" coords="0,55,80,110" alt="Tim" href="javascript: dytim()">
+		<area shape="rect" coords="0,111,80,160" alt="SAI2" href="javascript: dysai()">
+		</map>
+    </div>
+    
+</div>
+</body>
+</html>
