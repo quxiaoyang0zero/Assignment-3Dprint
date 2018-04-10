@@ -1,4 +1,5 @@
- ﻿### Yuandiaodiaodiao的手指识别
+![233](https://img.shields.io/teamcity/codebetter/bt428.svg)
+### Yuandiaodiaodiao的手指识别
 
 - 1 使用方法
 安装安卓客户端 在服务器挂载服务端main.py 监听1025端口
